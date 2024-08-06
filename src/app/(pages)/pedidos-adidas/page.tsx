@@ -4,7 +4,8 @@ import { Dropzone } from "@/components/Dropzone";
 import { Button } from "@/components/ui/button";
 import { exportXlsx } from "@/lib/export-xlsx";
 import axios from "axios";
-import { FileDown, File as FileIcon, X } from "lucide-react";
+import { ArrowLeft, FileDown, File as FileIcon, X } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 
 export default function Home() {
@@ -43,7 +44,13 @@ export default function Home() {
   return (
     <div className="h-screen flex justify-center items-center flex-col p-4">
       <div className="max-w-[600px] w-full">
-        <div className="flex justify-center items-center mb-4">
+        <div className="flex justify-between items-center mb-4">
+          <Button className="mr-5">
+            <Link href="/">
+              <ArrowLeft />
+            </Link>
+          </Button>
+
           <h1 className="text-2xl font-bold ">Gerador pedido Adidas</h1>
 
           <Button className="ml-5" onClick={handleExportExample}>
