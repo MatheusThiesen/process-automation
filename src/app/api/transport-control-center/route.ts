@@ -114,7 +114,9 @@ export async function POST(request: NextRequest) {
         where t.numero = ${item.NF}  ;
       `);
 
-      const BILLET_SUSTADO = billet.filter((f) => f.locCob === 49);
+      const BILLET_SUSTADO = billet.filter(
+        (f) => f.locCob === 49 || f.locCob === 63
+      );
       const BILLET_PROTESTO = billet.filter((f) => f.situacao === 14);
 
       return {
