@@ -14,9 +14,26 @@ import {
 import Link from "next/link";
 import { useState } from "react";
 
+interface FileProps {
+  "cod.produto": string;
+  oc: string;
+  "oc.item": string;
+  qtd: string;
+}
+
+interface LoadingDataProps {
+  total: number;
+  current: number;
+  oc: string;
+}
+
 export default function Home() {
   const [file, setFile] = useState<File | undefined>();
   const [loading, setLoading] = useState(false);
+
+  const [loadingData, setLoadingData] = useState<LoadingDataProps>(
+    {} as LoadingDataProps
+  );
 
   async function handleFileUpload() {
     try {
@@ -25,10 +42,33 @@ export default function Home() {
         const formData = new FormData();
         formData.append("file", file);
 
-        const response = await axios.post("/api/normalized-order", formData);
+        const readingFile = await axios.post<FileProps[]>(
+          "/api/reading-file-xlsx",
+          formData
+        );
+
+        let normalized = [];
+
+        let count = 0;
+        for (const readingData of readingFile.data) {
+          count++;
+
+          setLoadingData({
+            current: count,
+            oc: `${readingData.oc} ${readingData["oc.item"]}`,
+            total: readingFile.data.length,
+          });
+
+          const response = await axios.post(
+            "/api/normalized-order",
+            readingData
+          );
+
+          normalized.push(response.data);
+        }
 
         await exportXlsx({
-          data: response.data,
+          data: normalized,
           filename: "Pedido-de-compre-adidas",
         });
 
@@ -107,7 +147,15 @@ export default function Home() {
             onClick={handleFileUpload}
             disabled={loading}
           >
-            {loading ? <LoaderCircle className="animate-spin" /> : "GERAR"}
+            {loading ? (
+              <div className="flex">
+                <LoaderCircle className="animate-spin" />
+
+                <span className="ml-2">{`${loadingData.current}/${loadingData.total}`}</span>
+              </div>
+            ) : (
+              "GERAR"
+            )}
           </Button>
         </div>
       </div>
