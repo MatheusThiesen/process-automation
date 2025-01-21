@@ -4,26 +4,41 @@ import { Dropzone } from "@/components/Dropzone";
 import { Button } from "@/components/ui/button";
 import { exportXlsx } from "@/lib/export-xlsx";
 import axios from "axios";
-import { ArrowLeft, FileDown, File as FileIcon, X } from "lucide-react";
+import {
+  ArrowLeft,
+  FileDown,
+  File as FileIcon,
+  LoaderCircle,
+  X,
+} from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
 export default function Home() {
   const [file, setFile] = useState<File | undefined>();
+  const [loading, setLoading] = useState(false);
 
   async function handleFileUpload() {
-    if (file) {
-      const formData = new FormData();
-      formData.append("file", file);
+    try {
+      if (file) {
+        setLoading(true);
+        const formData = new FormData();
+        formData.append("file", file);
 
-      const response = await axios.post("/api/normalized-order", formData);
+        const response = await axios.post("/api/normalized-order", formData);
 
-      await exportXlsx({
-        data: response.data,
-        filename: "Pedido-de-compre-adidas",
-      });
+        await exportXlsx({
+          data: response.data,
+          filename: "Pedido-de-compre-adidas",
+        });
 
-      setFile(undefined);
+        setFile(undefined);
+        setLoading(false);
+      }
+    } catch (error) {
+      console.log(error);
+      alert("Ocorreu erro");
+      setLoading(false);
     }
   }
 
@@ -90,8 +105,9 @@ export default function Home() {
             className="mt-10 w-full"
             size={"lg"}
             onClick={handleFileUpload}
+            disabled={loading}
           >
-            GERAR
+            {loading ? <LoaderCircle className="animate-spin" /> : "GERAR"}
           </Button>
         </div>
       </div>

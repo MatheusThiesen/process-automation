@@ -80,6 +80,7 @@ export async function POST(request: NextRequest) {
   const sheetData = XLSX.utils.sheet_to_json<FileProps>(sheet);
 
   let normalized: NormalizedOrder[] = [];
+  let count = 0;
 
   for (const row of sheetData) {
     const getProduct = (
@@ -118,6 +119,8 @@ export async function POST(request: NextRequest) {
         qtd: row.qtd,
       });
     }
+    count++;
+    console.log(`Produto (${row["cod.produto"]}) ${count}/${sheetData.length}`);
   }
 
   return NextResponse.json(normalized);

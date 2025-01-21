@@ -6,7 +6,7 @@ class DbSiger {
     port: Number(process.env.RECH_MARIADB_PORT),
     user: process.env.RECH_MARIADB_USER,
     password: process.env.RECH_MARIADB_PASS,
-    connectionLimit: 20,
+    connectionLimit: 100,
   });
 
   public async $ExecuteQuery<T>(query: string): Promise<T[]> {
