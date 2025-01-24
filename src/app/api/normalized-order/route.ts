@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: false });
   }
 
-  let normalized: NormalizedOrder = {} as NormalizedOrder;
+  let normalized: NormalizedOrder[] = [] as NormalizedOrder[];
 
   const getProduct = (
     await dbSiger.$ExecuteQuery<ProductProps>(`
@@ -92,7 +92,7 @@ export async function POST(request: NextRequest) {
   const multiple = Number(data.qtd) / getProduct.qtdEmbalagem;
 
   for (const item of items) {
-    normalized = {
+    normalized.push({
       ID: `${data.oc}-${data["oc.item"]}/${data["cod.produto"]}`,
       Referência: getProduct.referencia,
       Quantidade: item.qtd * multiple,
@@ -105,7 +105,7 @@ export async function POST(request: NextRequest) {
       oc: data.oc,
       "oc.item": data["oc.item"],
       qtd: data.qtd,
-    };
+    });
   }
 
   return NextResponse.json(normalized);

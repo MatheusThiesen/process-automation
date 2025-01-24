@@ -47,7 +47,7 @@ export default function Home() {
           formData
         );
 
-        let normalized = [];
+        let normalized: any[] = [];
 
         let count = 0;
         for (const readingData of readingFile.data) {
@@ -63,8 +63,7 @@ export default function Home() {
             "/api/normalized-order",
             readingData
           );
-
-          normalized.push(response.data);
+          normalized = [...normalized, ...response.data];
         }
 
         await exportXlsx({
